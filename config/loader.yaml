@@ -1,0 +1,40 @@
+headers:
+  authority: www.finam.ru
+  method: GET
+  path: /js/finam/finam.issuer-profile.js?v=2012-05-28
+  scheme: https
+  accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+  accept - encoding: gzip, deflate, br
+  accept - language: ru - RU, ru; q = 0.9, en - US; q = 0.8, en; q = 0.7
+  user - agent: Mozilla / 5.0(Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36(KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36
+
+url:
+  # this market info gets only partial data, for instance 517:'Санкт-Петербургская биржа' is absent
+  # market_info: https://www.finam.ru/js/finam/finam.issuer-profile.js?v=2012-05-28y
+  market_info: https://www.finam.ru/profile/moex-akcii/sberbank
+  finam_cache: https://www.finam.ru/cache/N72Hgd54/icharts/icharts.js
+
+str_template:
+  # the following 2 strings works with market_info = https://www.finam.ru/js/finam/finam.issuer-profile.js?v=2012-05-28y
+  #market_substring_start_from: 'Finam.IssuerProfile._markets = '
+  #market_substring_stop: ';'
+  market_substring_start_from: 'Finam.IssuerProfile.Main.setMarkets('
+  market_substring_stop: ');'
+  split_symbol: ','
+  emitent_ids:
+    start_from: 'var aEmitentIds = ['
+    stop: ']'
+    split_symbol: ','
+  emitent_names:
+    start_from: 'var aEmitentNames = ['
+    stop: ']'
+    split_symbol: "','"
+  emitent_codes:
+    start_from: 'var aEmitentCodes = ['
+    stop: ']'
+    split_symbol: ','
+  emitent_markets:
+    start_from: 'var aEmitentMarkets = ['
+    stop: ']'
+    split_symbol: ','
+
