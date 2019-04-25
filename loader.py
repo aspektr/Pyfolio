@@ -29,6 +29,7 @@ class Loader:
         self.emitent_market_names = [self._markets_name[int(id)] for id in self.emitent_markets_ids]
         self.available_data = self._make_df()
 
+        # TODO create common config with HOME_DIR param and replace os.getcwd()
         save_file(payload=self.available_data, path=create_folder_if_not_exists(os.getcwd()))
 
     def _get_response(self, url):

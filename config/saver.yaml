@@ -1,0 +1,47 @@
+request:
+  period: 8
+  # 1=ticks
+  # 2=1 min
+  # 3=5 min
+  # 4=10 min
+  # 5=15 min
+  # 6=30 min
+  # 7=1 hour
+  # 8=1 day
+  # 9=1 week
+  # 10=1 month
+  date_format: 1
+  # 1=yyyymmdd
+  # 2=yymmdd
+  # 3=ddmmyy
+  # 4=dd/mm/yy
+  # 5=mm/dd/yy
+  time_format: 1
+  # 1=hhmmss
+  # 2=hhmm
+  # 3=hh:mm:ss
+  # 4=hh:mm
+  sep_fields: 3 # 3=; 1=, 2=. 4=\t 5=\space
+  sep_digits: 1
+  # 1=without separator
+  # 2=.
+  # 3=,
+  # 4=\space
+  # 5='
+  header: 1
+  # 1=ticker, per, date, time, open, high, low, close, vol
+  # 2=ticker, per, date, time, open, high, low, close
+  # 3=ticker, per, date, time, close, vol
+  # 4=ticker, per, date, time, close
+  # 5=date, time, open, high, low, close, vol
+  # 12=date, time, last, vol, id, open
+
+headers:
+  accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+  accept-encoding: gzip, deflate
+  accept-language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7
+  connection: keep-alive
+  cookie: _gcl_au=1.1.1181080178.1549810973; qw=RHDjmVxgPR5YY64P; qws=UkhEam1WeGdQUjVZWTY0UA~~#77WQB7TWhhE4mBJZ3j3TPg~~; _ym_uid=1549810975778713477; _ym_d=1549810975; tt_uid=f1883bfa-07d0-4bf4-8613-b22d8a91dd4d; _fbp=fb.1.1549810975479.30433524; __utmc=1; __utmz=1.1552223693.7.2.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided); ASPSESSIONIDAQARDBSR=FHOJAJHCMEBBMKJANPCPIAJF; __utma=1.672153268.1549810973.1552236678.1556188095.10; _ym_isad=2; subscribeModal=cancelled; nid=ssel8; last_visit=1556177646281::1556188446281; ASPSESSIONIDCCDDRCBQ=FHFMGDGAKMJLNPMDEABFJCGA
+  host: export.finam.ru
+  upgrade-insecure-requests: '1'
+  user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36
