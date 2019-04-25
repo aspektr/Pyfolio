@@ -4,6 +4,8 @@ import json
 import pandas as pd
 from config import Config
 import os
+from utilites import create_folder_if_not_exists
+from utilites import save_file
 
 
 class Loader:
@@ -149,7 +151,7 @@ class Loader:
                           (os.getpid(), type_info, emitent_list[0]))
         return emitent_list
 
-    def _join_data(self):
+    def _make_df(self):
         self.logger.debug("market_id list has length: %d" % len(self.emitent_markets_ids))
         self.logger.debug("market_name list has length: %d" % len(self.emitent_market_names))
         self.logger.debug("emitent_id list has length: %d" % len(self.emitent_ids))
