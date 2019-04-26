@@ -3,9 +3,10 @@ from config import Config
 import os
 from pandas import read_csv
 from loader import Loader
-from utilites import get_the_newest_fname
 from datetime import datetime
+from utilites import get_the_newest_fname
 from utilites import create_folder_if_not_exists
+from utilites import rotate_files
 import requests
 import csv
 
@@ -46,7 +47,7 @@ class Writer:
         path = os.getcwd() + '/metadata'
         if self.mode == 'update':
             _ = Loader()
-            return get_the_newest_fname(path)
+            return get_the_newest_fname(path, pattern='/*.csv')
         else:
             return self.mode + '.csv'
 
@@ -135,12 +136,18 @@ class Writer:
             url = self._make_url(sec)
             self.logger.info("[%u] URL %s" % (os.getpid(), url))
 
-            self._get_and_write(sec, url)
+            self._get_write_and_rotate(sec, url)
 
-    def _get_and_write(self, sec, url):
+    def _get_write_and_rotate(self, sec, url):
         r = self._get_response(url)
-        fname = self._make_fname_for_saving(sec)
+        fname = self._make_fname(sec)
         self._write_to_file(fname, r)
+        self._rotate_files(sec)
+
+    def _rotate_files(self, sec):
+        path = self._make_fname(sec, mode='dir_only')
+        pattern = self._make_fname(sec, mode='file_only')[:-14] + '*.csv'
+        rotate_files(path, pattern)
 
     @staticmethod
     def _write_to_file(fname, r):
@@ -154,14 +161,19 @@ class Writer:
                 writer.writerow(row)
 
     @staticmethod
-    def _make_fname_for_saving(sec):
+    def _make_fname(sec, mode='full_path'):
+        directory = os.getcwd() + '/quotes/'
         fname = '_'.join((str(sec.market_id),
                           sec.market_name,
                           str(sec.emitent_id),
                           sec.emitent_code,
                           sec.emitent_name,
                           datetime.today().strftime('%d-%m-%Y'))) + '.csv'
-        fname = os.getcwd() + '/quotes/' + fname
+        if mode == 'full_path':
+            fname = directory + fname
+        elif mode == 'dir_only':
+            fname = directory
+
         return fname
 
     def _get_response(self, url):
