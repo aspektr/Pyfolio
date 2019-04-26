@@ -1,15 +1,16 @@
 request:
-  period: 8
-  # 1=ticks
-  # 2=1 min
-  # 3=5 min
-  # 4=10 min
-  # 5=15 min
-  # 6=30 min
-  # 7=1 hour
-  # 8=1 day
-  # 9=1 week
-  # 10=1 month
+  kinds_of_periods:
+    ticks: 1
+    1min: 2
+    5min: 3
+    10min: 4
+    15min: 5
+    30min: 6
+    H: 7
+    D: 8
+    W: 9
+    M: 10
+  period: D
   date_format: 1
   # 1=yyyymmdd
   # 2=yymmdd

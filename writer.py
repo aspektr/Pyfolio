@@ -32,6 +32,7 @@ class Writer(Prototype):
         self.emitent_id = emitent_id
         self.emitent_code = emitent_code
         self.emitent_name = emitent_name
+        self.tf_index, self.tf_symbol = self._get_timeframe()
 
     # TODO create config with HOME_DIR param and METADATA_DIR and replace os.getcwd()
     def _get_metadata_fname(self):
@@ -76,7 +77,7 @@ class Writer(Prototype):
         yt = 'yt=%s&' % cur_date[0]
         cur_date.reverse()
         to = 'to=%s&' % '-'.join(cur_date)
-        p = 'p=%s&' % self.config['request']['period']
+        p = 'p=%s&' % self.tf_index
         f = 'payload&'
         e = 'e=.csv&'
         cn = 'cn=%s&' % df_str['emitent_code']
@@ -119,6 +120,11 @@ class Writer(Prototype):
                    + at)
         return url
 
+    def _get_timeframe(self):
+        symbol = self.config['request']['period']
+        index = self.config['request']['kinds_of_periods'][symbol]
+        return index, symbol
+
     def save(self):
         create_folder_if_not_exists(os.getcwd(), fname='quotes')
         for _, sec in self._find_securities():
@@ -131,13 +137,13 @@ class Writer(Prototype):
 
     def _get_write_and_rotate(self, sec, url):
         r = self._get_response(url)
-        fname = self._make_fname(sec)
+        fname = self._make_fname(sec, self.tf_symbol)
         self._write_to_file(fname, r)
         self._rotate_files(sec)
 
     def _rotate_files(self, sec):
-        path = self._make_fname(sec, mode='dir_only')
-        pattern = self._make_fname(sec, mode='file_only')[:-14] + '*.csv'
+        path = self._make_fname(sec, self.tf_symbol, mode='dir_only')
+        pattern = self._make_fname(sec, self.tf_symbol, mode='file_only')[:-14] + '*.csv'
         rotate_files(path, pattern)
 
     @staticmethod
@@ -152,13 +158,14 @@ class Writer(Prototype):
                 writer.writerow(row)
 
     @staticmethod
-    def _make_fname(sec, mode='full_path'):
+    def _make_fname(sec, tf, mode='full_path'):
         directory = os.getcwd() + '/quotes/'
         fname = '_'.join((str(sec.market_id),
                           sec.market_name,
                           str(sec.emitent_id),
                           sec.emitent_code,
                           sec.emitent_name,
+                          tf,
                           datetime.today().strftime('%d-%m-%Y'))) + '.csv'
         if mode == 'full_path':
             fname = directory + fname
