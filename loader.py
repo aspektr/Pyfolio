@@ -19,9 +19,9 @@ class Loader(Prototype):
         self.emitent_markets_ids = self._get_emitent_markets()
         self.emitent_market_names = [self._markets_name[int(id)] for id in self.emitent_markets_ids]
         self.available_data = self._make_df()
+        self.path_to_metadata = create_folder_if_not_exists()
 
-        # TODO create common config with HOME_DIR param and replace os.getcwd()
-        save_file(payload=self.available_data, path=create_folder_if_not_exists(os.getcwd()))
+        save_file(payload=self.available_data, path=self.path_to_metadata)
 
     def _get_response(self, url):
         r = requests.get(url, headers=self.config['headers'])

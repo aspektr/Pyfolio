@@ -5,6 +5,7 @@ from datetime import datetime
 from utilites import get_the_newest_fname
 from utilites import create_folder_if_not_exists
 from utilites import rotate_files
+from utilites import get_path
 import requests
 import csv
 from prototype import Prototype
@@ -33,13 +34,14 @@ class Writer(Prototype):
         self.emitent_code = emitent_code
         self.emitent_name = emitent_name
         self.tf_index, self.tf_symbol = self._get_timeframe()
+        # TODO take out dirname to config
+        self.quote_dir = 'quotes'
 
-    # TODO create config with HOME_DIR param and METADATA_DIR and replace os.getcwd()
     def _get_metadata_fname(self):
-        path = os.getcwd() + '/metadata'
         if self.mode == 'update':
-            _ = Loader()
-            return get_the_newest_fname(path, pattern='/*.csv')
+            ldr = Loader()
+            path = ldr.path_to_metadata
+            return get_the_newest_fname(path, pattern='*.csv')
         else:
             return self.mode + '.csv'
 
@@ -126,7 +128,7 @@ class Writer(Prototype):
         return index, symbol
 
     def save(self):
-        create_folder_if_not_exists(os.getcwd(), fname='quotes')
+        create_folder_if_not_exists(dirname=self.quote_dir)
         for _, sec in self._find_securities():
             self.logger.info("[%u] Start saving the following: " % os.getpid())
             self.logger.info("[%u] %s" % (os.getpid(), sec))
@@ -137,13 +139,13 @@ class Writer(Prototype):
 
     def _get_write_and_rotate(self, sec, url):
         r = self._get_response(url)
-        fname = self._make_fname(sec, self.tf_symbol)
+        fname = self._make_fname(sec, self.tf_symbol, self.quote_dir)
         self._write_to_file(fname, r)
         self._rotate_files(sec)
 
     def _rotate_files(self, sec):
-        path = self._make_fname(sec, self.tf_symbol, mode='dir_only')
-        pattern = self._make_fname(sec, self.tf_symbol, mode='file_only')[:-14] + '*.csv'
+        path = self._make_fname(sec, self.tf_symbol, self.quote_dir, mode='dir_only')
+        pattern = self._make_fname(sec, self.tf_symbol, self.quote_dir, mode='file_only')[:-14] + '*.csv'
         rotate_files(path, pattern)
 
     @staticmethod
@@ -158,8 +160,8 @@ class Writer(Prototype):
                 writer.writerow(row)
 
     @staticmethod
-    def _make_fname(sec, tf, mode='full_path'):
-        directory = os.getcwd() + '/quotes/'
+    def _make_fname(sec, tf, dir, mode='full_path'):
+        directory = get_path(dir)
         fname = '_'.join((str(sec.market_id),
                           sec.market_name,
                           str(sec.emitent_id),
