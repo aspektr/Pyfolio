@@ -3,7 +3,7 @@ from config import Config
 import os
 
 
-class Prototype:
+class Base:
     def __init__(self, name):
         # Prepare logger
         log.setup()
@@ -15,3 +15,5 @@ class Prototype:
         self.logger.debug("[%u] Config is loaded " % os.getpid())
         self.logger.debug("[%u] Config is %s" %
                           (os.getpid(), self.config))
+
+

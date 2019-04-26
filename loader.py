@@ -4,12 +4,12 @@ import pandas as pd
 import os
 from utilites import create_folder_if_not_exists
 from utilites import save_file
-from prototype import Prototype
+from prototypes import Base
 
 
-class Loader(Prototype):
+class Loader(Base):
     def __init__(self):
-        Prototype.__init__(self, __name__)
+        Base.__init__(self, __name__)
 
         self._markets_name = self._get_markets(key='id')
         self._data_from_cache = self._get_data_from_cache()

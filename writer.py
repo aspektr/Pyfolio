@@ -8,10 +8,10 @@ from utilites import rotate_files
 from utilites import get_path
 import requests
 import csv
-from prototype import Prototype
+from prototypes import Base
 
 
-class Writer(Prototype):
+class Writer(Base):
     """
     The main goal of this class to get quotes and save it.
     Mode can be 'update' or date like 'dd-mm-yyyy'.
@@ -25,7 +25,7 @@ class Writer(Prototype):
                  emitent_id=(),
                  emitent_code=(),
                  emitent_name=()):
-        Prototype.__init__(self, __name__)
+        Base.__init__(self, __name__)
 
         self.mode = mode
         self.market_id = market_id
