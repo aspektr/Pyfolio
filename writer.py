@@ -30,7 +30,7 @@ class Writer:
         self.logger = log.logging.getLogger(__name__)
 
         # Read config
-        self.config = Config(path="config/saver.yaml").load()
+        self.config = Config(path="config/writer.yaml").load()
         self.logger.debug("[%u] Config is loaded " % os.getpid())
         self.logger.debug("[%u] Config is %s" %
                           (os.getpid(), self.config))
