@@ -9,6 +9,7 @@ from utilites import get_path
 import requests
 import csv
 from prototypes import Base
+import sys
 
 
 class Writer(Base):
@@ -43,12 +44,16 @@ class Writer(Base):
             path = ldr.path_to_metadata
             return get_the_newest_fname(path, pattern='*.csv')
         else:
-            return self.mode + '.csv'
+            return Loader.path_to_metadata + self.mode + '.csv'
 
     def _get_metadata(self):
         fname = self._get_metadata_fname()
-        df = read_csv(fname, sep=';')
-        return df
+        try:
+            df = read_csv(fname, sep=';')
+            return df
+        except Exception as e:
+            self.logger.error('[%u] %s' % (os.getpid(), e))
+            sys.exit(1)
 
     def _find_securities(self):
         df = self._get_metadata()
@@ -73,12 +78,12 @@ class Writer(Base):
         mf = 'mf=0&'
         yf = 'yf=1990&'
         from_ = 'from=01.01.1990&'
-        cur_date = str(datetime.today()).split()[0].split('-')
-        dt = 'dt=%s&' % cur_date[2]
-        mt = 'mt=%s&' % (int(cur_date[1].lstrip('0')) - 1)
-        yt = 'yt=%s&' % cur_date[0]
-        cur_date.reverse()
-        to = 'to=%s&' % '-'.join(cur_date)
+        to_date = self._get_todate()
+        dt = 'dt=%s&' % to_date[2]
+        mt = 'mt=%s&' % (int(to_date[1].lstrip('0')) - 1)
+        yt = 'yt=%s&' % to_date[0]
+        to_date.reverse()
+        to = 'to=%s&' % '-'.join(to_date)
         p = 'p=%s&' % self.tf_index
         f = 'payload&'
         e = 'e=.csv&'
@@ -121,6 +126,14 @@ class Writer(Base):
                    + datf
                    + at)
         return url
+
+    def _get_todate(self):
+        if self.mode == 'update':
+            to_date = str(datetime.today()).split()[0].split('-')
+        else:
+            to_date = self.mode.split('-')
+            to_date[2], to_date[0] = to_date[0], to_date[2]
+        return to_date
 
     def _get_timeframe(self):
         symbol = self.config['request']['period']

@@ -8,6 +8,8 @@ from prototypes import Base
 
 
 class Loader(Base):
+    path_to_metadata = create_folder_if_not_exists()
+
     def __init__(self):
         Base.__init__(self, __name__)
 
@@ -19,9 +21,8 @@ class Loader(Base):
         self.emitent_markets_ids = self._get_emitent_markets()
         self.emitent_market_names = [self._markets_name[int(id)] for id in self.emitent_markets_ids]
         self.available_data = self._make_df()
-        self.path_to_metadata = create_folder_if_not_exists()
 
-        save_file(payload=self.available_data, path=self.path_to_metadata)
+        save_file(payload=self.available_data, path=Loader.path_to_metadata)
 
     def _get_response(self, url):
         r = requests.get(url, headers=self.config['headers'])
