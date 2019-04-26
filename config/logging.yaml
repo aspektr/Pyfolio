@@ -31,7 +31,7 @@ handlers:
 
 loggers:
   loader:
-    level: DEBUG
+    level: INFO
     handlers: [console]
     propagate: no
   saver:

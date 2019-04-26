@@ -1,24 +1,15 @@
-import log
 import requests
 import json
 import pandas as pd
-from config import Config
 import os
 from utilites import create_folder_if_not_exists
 from utilites import save_file
+from prototype import Prototype
 
 
-class Loader:
+class Loader(Prototype):
     def __init__(self):
-        # Prepare logger
-        log.setup()
-        self.logger = log.logging.getLogger(__name__)
-
-        # Read config
-        self.config = Config(path="config/loader.yaml").load()
-        self.logger.debug("[%u] Config is loaded " % os.getpid())
-        self.logger.debug("[%u] Config is %s" %
-                          (os.getpid(), self.config))
+        Prototype.__init__(self, __name__)
 
         self._markets_name = self._get_markets(key='id')
         self._data_from_cache = self._get_data_from_cache()

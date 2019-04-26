@@ -1,5 +1,3 @@
-import log
-from config import Config
 import os
 from pandas import read_csv
 from loader import Loader
@@ -9,9 +7,10 @@ from utilites import create_folder_if_not_exists
 from utilites import rotate_files
 import requests
 import csv
+from prototype import Prototype
 
 
-class Writer:
+class Writer(Prototype):
     """
     The main goal of this class to get quotes and save it.
     Mode can be 'update' or date like 'dd-mm-yyyy'.
@@ -20,20 +19,12 @@ class Writer:
     """
     def __init__(self,
                  mode='update',
-                 market_id=[],
-                 market_name=[],
-                 emitent_id=[],
-                 emitent_code=[],
-                 emitent_name=[]):
-        # Prepare logger
-        log.setup()
-        self.logger = log.logging.getLogger(__name__)
-
-        # Read config
-        self.config = Config(path="config/writer.yaml").load()
-        self.logger.debug("[%u] Config is loaded " % os.getpid())
-        self.logger.debug("[%u] Config is %s" %
-                          (os.getpid(), self.config))
+                 market_id=(),
+                 market_name=(),
+                 emitent_id=(),
+                 emitent_code=(),
+                 emitent_name=()):
+        Prototype.__init__(self, __name__)
 
         self.mode = mode
         self.market_id = market_id
