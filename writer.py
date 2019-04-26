@@ -152,13 +152,14 @@ class Writer(Base):
 
     def _get_write_and_rotate(self, sec, url):
         r = self._get_response(url)
-        fname = self._make_fname(sec, self.tf_symbol, self.quote_dir)
+        fname = self._make_fname(sec, self.tf_symbol, self.quote_dir, self._get_todate())
         self._write_to_file(fname, r)
-        self._rotate_files(sec)
+        if self.mode == 'update':
+            self._rotate_files(sec)
 
     def _rotate_files(self, sec):
-        path = self._make_fname(sec, self.tf_symbol, self.quote_dir, mode='dir_only')
-        pattern = self._make_fname(sec, self.tf_symbol, self.quote_dir, mode='file_only')[:-14] + '*.csv'
+        path = self._make_fname(sec, self.tf_symbol, self.quote_dir, self._get_todate(), mode='dir_only')
+        pattern = self._make_fname(sec, self.tf_symbol, self.quote_dir, self._get_todate(), mode='file_only')[:-14] + '*.csv'
         rotate_files(path, pattern)
 
     @staticmethod
@@ -173,15 +174,16 @@ class Writer(Base):
                 writer.writerow(row)
 
     @staticmethod
-    def _make_fname(sec, tf, dir, mode='full_path'):
+    def _make_fname(sec, tf, dir, to_date, mode='full_path'):
         directory = get_path(dir)
+        to_date.reverse()
         fname = '_'.join((str(sec.market_id),
                           sec.market_name,
                           str(sec.emitent_id),
                           sec.emitent_code,
                           sec.emitent_name,
                           tf,
-                          datetime.today().strftime('%d-%m-%Y'))) + '.csv'
+                          '-'.join(to_date))) + '.csv'
         if mode == 'full_path':
             fname = directory + fname
         elif mode == 'dir_only':
