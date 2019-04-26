@@ -86,3 +86,5 @@ venv.bak/
 .idea/**/dbnavigator.xml
 
 /helpers/
+/quotes/
+/metadata/
