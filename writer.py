@@ -39,9 +39,12 @@ class Writer(Base):
         self.quote_dir = 'quotes'
 
     def _get_metadata_fname(self):
-        if self.mode == 'update':
+        path = Loader.path_to_metadata
+        isfile = os.path.isfile(path + datetime.today().strftime("%d-%m-%Y") + '.csv')
+        if self.mode == 'update' and isfile is not True:
             ldr = Loader()
-            path = ldr.path_to_metadata
+            return get_the_newest_fname(path, pattern='*.csv')
+        elif self.mode == 'update' and isfile:
             return get_the_newest_fname(path, pattern='*.csv')
         else:
             return Loader.path_to_metadata + self.mode + '.csv'
@@ -65,6 +68,7 @@ class Writer(Base):
             (df.emitent_name.isin(self.emitent_name))].copy()
 
         res['emitent_code'] = res.emitent_code.apply(lambda x: x.replace("'", ""))
+        res.index = range(res.shape[0])
         return res.iterrows()
 
     def _make_url(self, df_str):
@@ -143,7 +147,7 @@ class Writer(Base):
     def save(self):
         create_folder_if_not_exists(dirname=self.quote_dir)
         for _, sec in self._find_securities():
-            self.logger.info("[%u] Start saving the following: " % os.getpid())
+            self.logger.info("[%u] Start downloading the following: " % os.getpid())
             self.logger.info("[%u] %s" % (os.getpid(), sec))
             url = self._make_url(sec)
             self.logger.info("[%u] URL %s" % (os.getpid(), url))
