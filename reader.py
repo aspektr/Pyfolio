@@ -18,7 +18,7 @@ class Reader(QuotesIO):
 
     def read(self, reference: dict, dfrom='2016-01-01', dto=None,
              price='CLOSE', volume=False, download_if_not_exists=True,
-             normalize=True):
+             normalize=True, daily_returns=True):
 
         df = self._make_initial_df(dfrom, dto)
         for _, sec in self._find_securities():
@@ -38,12 +38,22 @@ class Reader(QuotesIO):
 
         if normalize:
             df = self._normalize_data(df)
+        if daily_returns:
+            df = self._compute_daily_returns(df)
 
         self.logger.info("[%u] Result dataset has size %d x %d" % (os.getpid(),df.shape[0], df.shape[1]))
         self.logger.info("[%u] First row:" % os.getpid())
-        print(df.head(1))
+        print(df.head(3))
         self.logger.info("[%u] Last row:" % os.getpid())
-        print(df.tail(1))
+        print(df.tail(3))
+
+    @staticmethod
+    def _compute_daily_returns(df):
+        """Compute and return the daily return values."""
+        res = df.copy()
+        res[1:] = (df[1:] / df[:-1].values) - 1
+        res.ix[0, :] = 0
+        return res
 
     @staticmethod
     def _normalize_data(df):
