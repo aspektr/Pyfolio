@@ -35,7 +35,11 @@ class Reader(QuotesIO):
 
             df = self._dropnan(df, reference, sec)
 
-        print(df.tail(20))
+        self.logger.info("[%u] Result dataset has size %d x %d" % (os.getpid(),df.shape[0], df.shape[1]))
+        self.logger.info("[%u] First row:" % os.getpid())
+        print(df.head(1))
+        self.logger.info("[%u] Last row:" % os.getpid())
+        print(df.tail(1))
 
     def get_data_from_file_or_download_it(self, df, download_if_not_exists, fname, price, sec, volume):
         if os.path.isfile(fname):
