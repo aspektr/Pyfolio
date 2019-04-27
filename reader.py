@@ -17,7 +17,8 @@ class Reader(QuotesIO):
     """
 
     def read(self, reference: dict, dfrom='2016-01-01', dto=None,
-             price='CLOSE', volume=False, download_if_not_exists=True):
+             price='CLOSE', volume=False, download_if_not_exists=True,
+             normalize=True):
 
         df = self._make_initial_df(dfrom, dto)
         for _, sec in self._find_securities():
@@ -35,11 +36,19 @@ class Reader(QuotesIO):
 
             df = self._dropnan(df, reference, sec)
 
+        if normalize:
+            df = self._normalize_data(df)
+
         self.logger.info("[%u] Result dataset has size %d x %d" % (os.getpid(),df.shape[0], df.shape[1]))
         self.logger.info("[%u] First row:" % os.getpid())
         print(df.head(1))
         self.logger.info("[%u] Last row:" % os.getpid())
         print(df.tail(1))
+
+    @staticmethod
+    def _normalize_data(df):
+        df = df / df.ix[0, :]
+        return df
 
     def get_data_from_file_or_download_it(self, df, download_if_not_exists, fname, price, sec, volume):
         if os.path.isfile(fname):
