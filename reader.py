@@ -48,7 +48,7 @@ class Reader(Base):
         path = Loader.path_to_metadata
         isfile = os.path.isfile(path + datetime.today().strftime("%d-%m-%Y") + '.csv')
         if self.mode == 'update' and isfile is not True:
-            ldr = Loader()
+            Loader()
             return get_the_newest_fname(path, pattern='*.csv')
         elif self.mode == 'update' and isfile:
             return get_the_newest_fname(path, pattern='*.csv')
@@ -86,8 +86,8 @@ class Reader(Base):
         return to_date
 
     @staticmethod
-    def _make_fname(sec, tf, dir, to_date, mode='full_path'):
-        directory = get_path(dir)
+    def _make_fname(sec, tf, directory, to_date, mode='full_path'):
+        directory = get_path(directory)
         to_date.reverse()
         fname = '_'.join((str(sec.market_id),
                           sec.market_name,

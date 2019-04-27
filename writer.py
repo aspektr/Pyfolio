@@ -42,7 +42,7 @@ class Writer(Base):
         path = Loader.path_to_metadata
         isfile = os.path.isfile(path + datetime.today().strftime("%d-%m-%Y") + '.csv')
         if self.mode == 'update' and isfile is not True:
-            ldr = Loader()
+            Loader()
             return get_the_newest_fname(path, pattern='*.csv')
         elif self.mode == 'update' and isfile:
             return get_the_newest_fname(path, pattern='*.csv')
@@ -103,32 +103,32 @@ class Writer(Base):
         at = 'at=1'
 
         url = (domen
-                   + fname
-                   + market
-                   + em
-                   + code
-                   + apply
-                   + df
-                   + mf
-                   + yf
-                   + from_
-                   + dt
-                   + mt
-                   + yt
-                   + to
-                   + p
-                   + f
-                   + e
-                   + cn
-                   + dtf
-                   + tmf
-                   + msor
-                   + mstime
-                   + mstimever
-                   + sep
-                   + sep2
-                   + datf
-                   + at)
+               + fname
+               + market
+               + em
+               + code
+               + apply
+               + df
+               + mf
+               + yf
+               + from_
+               + dt
+               + mt
+               + yt
+               + to
+               + p
+               + f
+               + e
+               + cn
+               + dtf
+               + tmf
+               + msor
+               + mstime
+               + mstimever
+               + sep
+               + sep2
+               + datf
+               + at)
         return url
 
     def _get_todate(self):
@@ -163,7 +163,11 @@ class Writer(Base):
 
     def _rotate_files(self, sec):
         path = self._make_fname(sec, self.tf_symbol, self.quote_dir, self._get_todate(), mode='dir_only')
-        pattern = self._make_fname(sec, self.tf_symbol, self.quote_dir, self._get_todate(), mode='file_only')[:-14] + '*.csv'
+        pattern = self._make_fname(sec,
+                                   self.tf_symbol,
+                                   self.quote_dir,
+                                   self._get_todate(),
+                                   mode='file_only')[:-14] + '*.csv'
         rotate_files(path, pattern)
 
     @staticmethod
@@ -178,8 +182,8 @@ class Writer(Base):
                 writer.writerow(row)
 
     @staticmethod
-    def _make_fname(sec, tf, dir, to_date, mode='full_path'):
-        directory = get_path(dir)
+    def _make_fname(sec, tf, directory, to_date, mode='full_path'):
+        directory = get_path(directory)
         to_date.reverse()
         fname = '_'.join((str(sec.market_id),
                           sec.market_name,
@@ -201,7 +205,3 @@ class Writer(Base):
                          allow_redirects=True)
         assert r.status_code == 200, "Response error - %s" % r.status_code
         return r
-
-
-
-

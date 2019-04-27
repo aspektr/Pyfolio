@@ -19,7 +19,7 @@ class Loader(Base):
         self.emitent_names = self._get_emitent_names()
         self.emitent_codes = self._get_emitent_codes()
         self.emitent_markets_ids = self._get_emitent_markets()
-        self.emitent_market_names = [self._markets_name[int(id)] for id in self.emitent_markets_ids]
+        self.emitent_market_names = [self._markets_name[int(id_)] for id_ in self.emitent_markets_ids]
         self.available_data = self._make_df()
 
         save_file(payload=self.available_data, path=Loader.path_to_metadata)
@@ -77,7 +77,6 @@ class Loader(Base):
     def _to_dict(self, json_data, key):
         """
             Turn substring into dict
-        :param markets_substring:
         :return: dict like {'ММВБ-Top': 200, 'ММВБ Акции': 1,...
         """
         if key == 'id':

@@ -34,5 +34,3 @@ def rotate_files(path, pattern):
     for f in glob.glob(path + pattern):
         if f != lastf:
             os.remove(f)
-
-

@@ -15,5 +15,3 @@ class Base:
         self.logger.debug("[%u] Config is loaded " % os.getpid())
         self.logger.debug("[%u] Config is %s" %
                           (os.getpid(), self.config))
-
-
