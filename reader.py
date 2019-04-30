@@ -40,12 +40,20 @@ class Reader(QuotesIO):
             df = self._normalize_data(df)
         if daily_returns:
             df = self._compute_daily_returns(df)
+        df = self._fill_missing_values(df)
 
-        self.logger.info("[%u] Result dataset has size %d x %d" % (os.getpid(),df.shape[0], df.shape[1]))
+        self.logger.info("[%u] Result dataset has size %d x %d" % (os.getpid(), df.shape[0], df.shape[1]))
         self.logger.info("[%u] First row:" % os.getpid())
         print(df.head(3))
         self.logger.info("[%u] Last row:" % os.getpid())
         print(df.tail(3))
+
+    @staticmethod
+    def _fill_missing_values(df_data):
+        """Fill missing values in data frame, in place."""
+        df_data.fillna(method='ffill', inplace=True)
+        df_data.fillna(method='bfill', inplace=True)
+        return df_data
 
     @staticmethod
     def _compute_daily_returns(df):
