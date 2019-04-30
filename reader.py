@@ -47,6 +47,7 @@ class Reader(QuotesIO):
         print(df.head(3))
         self.logger.info("[%u] Last row:" % os.getpid())
         print(df.tail(3))
+        return df
 
     @staticmethod
     def _fill_missing_values(df_data):
