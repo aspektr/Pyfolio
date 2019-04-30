@@ -1,9 +1,10 @@
 import yaml
 import log
+import os
 
 
 class Config:
-    def __init__(self, path="configs/config.yaml"):
+    def __init__(self, path="config/config.yaml"):
         self.path = path
         log.setup()
         self.logger = log.logging.getLogger(__name__)
@@ -16,7 +17,10 @@ class Config:
             with open(self.path, 'r') as ymlfile:
                 cfg = yaml.load(ymlfile)
         except FileNotFoundError:
-            self.logger.warning("Config file %s hasn't been found" % self.path)
+            self.logger.warning("[%u] Config file %s hasn't been found" %
+                                (os.getpid(), self.path))
+            self.logger.warning("[%u] Current directory is %s" %
+                                (os.getpid(), os.getcwd()))
             cfg = None
 
         return cfg
