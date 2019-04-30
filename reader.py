@@ -35,6 +35,7 @@ class Reader(QuotesIO):
                                                         volume)
 
             df = self._dropnan(df, reference, sec)
+            df = self._mark_ref(df, reference, sec)
 
         if normalize:
             df = self._normalize_data(df)
@@ -47,6 +48,12 @@ class Reader(QuotesIO):
         print(df.head(3))
         self.logger.info("[%u] Last row:" % os.getpid())
         print(df.tail(3))
+        return df
+
+    def _mark_ref(self, df, reference, sec):
+        reference_field_name, reference_value = self._get_reference(reference)
+        if sec[reference_field_name] == reference_value:
+            df = df.rename(columns={sec['emitent_code']: sec['emitent_code'] + '_Ref'})
         return df
 
     @staticmethod
@@ -80,8 +87,7 @@ class Reader(QuotesIO):
         return df
 
     def _dropnan(self, df, reference, sec):
-        reference_field_name = list(reference.keys())[0]
-        reference_value = reference[reference_field_name]
+        reference_field_name, reference_value = self._get_reference(reference)
         if sec[reference_field_name] == reference_value:
             try:
                 df = df.dropna(subset=[sec['emitent_code']])
@@ -90,6 +96,12 @@ class Reader(QuotesIO):
                                  % (os.getpid(), reference_field_name, reference_value))
                 df = df.dropna()
         return df
+
+    @staticmethod
+    def _get_reference(reference):
+        reference_field_name = list(reference.keys())[0]
+        reference_value = reference[reference_field_name]
+        return reference_field_name, reference_value
 
     def _read_and_join_df(self, df, fname, price, sec, volume):
         df_temp = self._read_file(fname, price, sec, volume)
