@@ -34,11 +34,14 @@ loggers:
     level: INFO
     handlers: [console]
     propagate: no
-  saver:
+  writer:
     level: DEBUG
     handlers: [console]
     propagate: no
-
+  portfolio:
+    level: DEBUG
+    handlers: [console]
+    propagate: no
 root:
   level: INFO
   handlers: [console, info_file_handler, error_file_handler]
