@@ -2,6 +2,7 @@ import os
 import pandas as pd
 from datetime import datetime
 import glob
+from pandas.core.indexing import IndexingError
 
 
 def get_path(subfolder=None):
@@ -34,3 +35,20 @@ def rotate_files(path, pattern):
     for f in glob.glob(path + pattern):
         if f != lastf:
             os.remove(f)
+
+
+def normalize_data(df):
+    res = df.copy()
+    res = res / res.ix[0, :]
+    return res
+
+
+def compute_daily_returns(df):
+    """Compute and return the daily return values."""
+    res = df.copy()
+    res[1:] = (df[1:] / df[:-1].values) - 1
+    try:
+        res.ix[0, :] = 0  # replace .ix
+    except IndexingError:
+        res.ix[0] = 0
+    return res

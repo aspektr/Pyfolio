@@ -4,6 +4,8 @@ from pandas import DataFrame
 import os
 from writer import Writer
 from quotesio import QuotesIO
+from utilites import normalize_data
+from utilites import compute_daily_returns
 
 
 class Reader(QuotesIO):
@@ -16,9 +18,8 @@ class Reader(QuotesIO):
     and quote files like '*_dd-mm-yyyy.csv' will be used
     """
 
-    def read(self, reference: dict, dfrom='2016-01-01', dto=None,
-             price='CLOSE', volume=False, download_if_not_exists=True,
-             normalize=True, daily_returns=True):
+    def read(self, reference: dict, dfrom='2016-01-01', dto=None, price='CLOSE', volume=False,
+             download_if_not_exists=True, normed=True, daily_returns=True):
 
         df = self._make_initial_df(dfrom, dto)
         for _, sec in self._find_securities():
@@ -37,7 +38,7 @@ class Reader(QuotesIO):
             df = self._dropnan(df, reference, sec)
             df = self._mark_ref(df, reference, sec)
 
-        if normalize:
+        if normed:
             df = self._normalize_data(df)
         if daily_returns:
             df = self._compute_daily_returns(df)
@@ -45,9 +46,9 @@ class Reader(QuotesIO):
 
         self.logger.info("[%u] Result dataset has size %d x %d" % (os.getpid(), df.shape[0], df.shape[1]))
         self.logger.info("[%u] First row:" % os.getpid())
-        print(df.head(3))
+        print(df.head(10))
         self.logger.info("[%u] Last row:" % os.getpid())
-        print(df.tail(3))
+        print(df.tail(10))
         return df
 
     def _mark_ref(self, df, reference, sec):
@@ -66,15 +67,11 @@ class Reader(QuotesIO):
     @staticmethod
     def _compute_daily_returns(df):
         """Compute and return the daily return values."""
-        res = df.copy()
-        res[1:] = (df[1:] / df[:-1].values) - 1
-        res.ix[0, :] = 0
-        return res
+        return compute_daily_returns(df)
 
     @staticmethod
     def _normalize_data(df):
-        df = df / df.ix[0, :]
-        return df
+        return normalize_data(df)
 
     def get_data_from_file_or_download_it(self, df, download_if_not_exists, fname, price, sec, volume):
         if os.path.isfile(fname):
