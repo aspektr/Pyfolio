@@ -1,3 +1,5 @@
 requests
 pyyaml
 pandas==0.24.1
+scipy==1.2.1
+numpy
