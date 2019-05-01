@@ -97,7 +97,7 @@ class Reader(QuotesIO):
     @staticmethod
     def _get_reference(reference):
         reference_field_name = list(reference.keys())[0]
-        reference_value = reference[reference_field_name]
+        reference_value = str(reference[reference_field_name])
         return reference_field_name, reference_value
 
     def _read_and_join_df(self, df, fname, price, sec, volume):
@@ -126,7 +126,7 @@ class Reader(QuotesIO):
     def _make_initial_df(self, dfrom, dto):
         if dto is None:
             dto = self._get_todate()
-            dto.reverse()
+            # dto.reverse()
             dto = '-'.join(dto)
         dates = date_range(dfrom, dto)
         return DataFrame(index=dates)
