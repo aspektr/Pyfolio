@@ -58,12 +58,13 @@ class QuotesIO(Base):
         res = df[
             (df.market_id.isin(self.market_id)) |
             (df.market_name.isin(self.market_name)) |
-            (df.emitent_id.isin(self.emitent_id)) |
+            (df.emitent_id.isin(map(str, self.emitent_id))) |
             (df.emitent_code.isin(self.emitent_code)) |
             (df.emitent_name.isin(self.emitent_name))].copy()
-
         res['emitent_code'] = res.emitent_code.apply(lambda x: x.replace("'", ""))
         res.index = range(res.shape[0])
+        self.logger.info("[%u] Found %s securities" % (os.getpid(), res.shape[0]))
+        res.drop_duplicates(subset=['emitent_id'], keep='first', inplace=True)
         return res.iterrows()
 
     def _get_todate(self):
@@ -78,6 +79,7 @@ class QuotesIO(Base):
     def _make_fname(sec, tf, directory, to_date, mode='full_path'):
         directory = get_path(directory)
         to_date.reverse()
+        sec.emitent_name = sec.emitent_name.replace('/', '_')
         fname = '_'.join((str(sec.market_id),
                           sec.market_name,
                           str(sec.emitent_id),
